@@ -40,7 +40,7 @@ local Title = Instance.new("TextLabel", Frame)
 Title.Size = UDim2.new(1, -80, 0, 50)
 Title.Position = UDim2.new(0, 15, 0, 0)
 Title.BackgroundTransparency = 1
-Title.Text = "✨ 貓玲的腳本區 ✨pusher+aggro v0.1"
+Title.Text = "✨ 貓玲的腳本區 ✨"
 Title.Font = Enum.Font.GothamBold
 Title.TextSize = 22
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -239,11 +239,6 @@ local function pushToCenter()
         LocalPlayer.DevEnableMouseLock = false
     end
     
-    -- 點擊推進器
-    if workspace.Lobby:FindFirstChild("Pusher") and workspace.Lobby.Pusher:FindFirstChild("ClickDetector") then
-        fireclickdetector(workspace.Lobby.Pusher.ClickDetector)
-    end
-    
     -- 以(0,0,0)為圓心，110單位為半徑，從(110,0,0)開始向左移動45度，重複8次
     local player = LocalPlayer
     if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
@@ -261,12 +256,19 @@ local function pushToCenter()
             -- 移動到位置
             humanoidRootPart.CFrame = CFrame.new(Vector3.new(x, humanoidRootPart.Position.Y, z), Vector3.new(0, 0, 0))
             
+            wait(0.01) -- 極短延遲讓移動完成
+            
+            -- 點擊推進器
+            if workspace.Lobby:FindFirstChild("Pusher") and workspace.Lobby.Pusher:FindFirstChild("ClickDetector") then
+                fireclickdetector(workspace.Lobby.Pusher.ClickDetector)
+            end
+            
             -- 發送推牆信號
             if ReplicatedStorage:FindFirstChild("PusherWall") then
                 ReplicatedStorage.PusherWall:FireServer()
             end
             
-            wait(0.1) -- 短暫延遲
+            wait(0.01) -- 極短延遲
         end
     end
 end
@@ -303,7 +305,7 @@ local function pushToVoid()
                 ReplicatedStorage.PusherWall:FireServer()
             end
             
-            wait(0.1) -- 短暫延遲
+            wait(0.01) -- 極短延遲
         end
     end
 end
