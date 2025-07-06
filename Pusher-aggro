@@ -5,6 +5,8 @@ local LocalPlayer = Players.LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
+local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
 
 -- GUI 主體
 local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
@@ -342,6 +344,56 @@ local function attractHate()
     end
 end
 
+local function serverHop()
+    -- 解除Shiftlock
+    if LocalPlayer.DevEnableMouseLock then
+        LocalPlayer.DevEnableMouseLock = false
+    end
+    
+    local TeleportService = game:GetService("TeleportService")
+    local HttpService = game:GetService("HttpService")
+    
+    -- 獲取當前遊戲的服務器列表
+    local success, servers = pcall(function()
+        return HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100"))
+    end)
+    
+    if success and servers and servers.data then
+        -- 尋找人數為14人的服務器
+        for _, server in pairs(servers.data) do
+            if server.playing == 14 and server.id ~= game.JobId then
+                print("找到目標服務器，人數: " .. server.playing)
+                TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id)
+                return
+            end
+        end
+        
+        -- 如果沒找到14人的服務器，尋找最接近14人的服務器
+        local bestServer = nil
+        local bestDifference = math.huge
+        
+        for _, server in pairs(servers.data) do
+            if server.id ~= game.JobId then
+                local difference = math.abs(server.playing - 14)
+                if difference < bestDifference then
+                    bestDifference = difference
+                    bestServer = server
+                end
+            end
+        end
+        
+        if bestServer then
+            print("找到最接近的服務器，人數: " .. bestServer.playing)
+            TeleportService:TeleportToPlaceInstance(game.PlaceId, bestServer.id)
+        else
+            print("沒有找到可用的服務器")
+        end
+    else
+        print("無法獲取服務器列表，執行隨機跳服")
+        TeleportService:Teleport(game.PlaceId)
+    end
+end
+
 -- 建立推牆&仇恨分區內容
 local function createPushWallContent()
     local pushWallContent = Instance.new("Frame", Content)
@@ -361,18 +413,22 @@ local function createPushWallContent()
     sectionTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
     sectionTitle.TextXAlignment = Enum.TextXAlignment.Center
     
-    -- 建立三個按鈕
-    local pushCenterBtn = createButton("推向中央", 1, pushWallContent, 50)
-    pushCenterBtn.Position = UDim2.new(0.5, -90, 0, 50)
+    -- 建立四個按鈕
+    local pushCenterBtn = createButton("推向中央", 1, pushWallContent, 40)
+    pushCenterBtn.Position = UDim2.new(0.5, -90, 0, 40)
     pushCenterBtn.MouseButton1Click:Connect(pushToCenter)
     
-    local pushVoidBtn = createButton("推向虛空", 2, pushWallContent, 50)
-    pushVoidBtn.Position = UDim2.new(0.5, -90, 0, 100)
+    local pushVoidBtn = createButton("推向虛空", 2, pushWallContent, 40)
+    pushVoidBtn.Position = UDim2.new(0.5, -90, 0, 85)
     pushVoidBtn.MouseButton1Click:Connect(pushToVoid)
     
-    local attractHateBtn = createButton("吸引仇恨", 3, pushWallContent, 50)
-    attractHateBtn.Position = UDim2.new(0.5, -90, 0, 150)
+    local attractHateBtn = createButton("吸引仇恨", 3, pushWallContent, 40)
+    attractHateBtn.Position = UDim2.new(0.5, -90, 0, 130)
     attractHateBtn.MouseButton1Click:Connect(attractHate)
+    
+    local serverHopBtn = createButton("跳轉伺服器", 4, pushWallContent, 40)
+    serverHopBtn.Position = UDim2.new(0.5, -90, 0, 175)
+    serverHopBtn.MouseButton1Click:Connect(serverHop)
     
     return pushWallContent
 end
