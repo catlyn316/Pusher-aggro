@@ -40,7 +40,7 @@ local Title = Instance.new("TextLabel", Frame)
 Title.Size = UDim2.new(1, -80, 0, 50)
 Title.Position = UDim2.new(0, 15, 0, 0)
 Title.BackgroundTransparency = 1
-Title.Text = "✨ 貓玲的腳本區 ✨"
+Title.Text = "✨ 貓玲的腳本區 ✨pusher+aggro v0.1"
 Title.Font = Enum.Font.GothamBold
 Title.TextSize = 22
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -234,6 +234,11 @@ end
 
 -- 推牆&仇恨功能函數
 local function pushToCenter()
+    -- 解除Shiftlock
+    if LocalPlayer.DevEnableMouseLock then
+        LocalPlayer.DevEnableMouseLock = false
+    end
+    
     -- 點擊推進器
     if workspace.Lobby:FindFirstChild("Pusher") and workspace.Lobby.Pusher:FindFirstChild("ClickDetector") then
         fireclickdetector(workspace.Lobby.Pusher.ClickDetector)
@@ -267,6 +272,11 @@ local function pushToCenter()
 end
 
 local function pushToVoid()
+    -- 解除Shiftlock
+    if LocalPlayer.DevEnableMouseLock then
+        LocalPlayer.DevEnableMouseLock = false
+    end
+    
     -- 點擊推進器
     if workspace.Lobby:FindFirstChild("Pusher") and workspace.Lobby.Pusher:FindFirstChild("ClickDetector") then
         fireclickdetector(workspace.Lobby.Pusher.ClickDetector)
@@ -299,6 +309,11 @@ local function pushToVoid()
 end
 
 local function attractHate()
+    -- 解除Shiftlock
+    if LocalPlayer.DevEnableMouseLock then
+        LocalPlayer.DevEnableMouseLock = false
+    end
+    
     -- 點擊Aggro
     if workspace.Lobby:FindFirstChild("Aggro") and workspace.Lobby.Aggro:FindFirstChild("ClickDetector") then
         fireclickdetector(workspace.Lobby.Aggro.ClickDetector)
@@ -338,7 +353,7 @@ local function createPushWallContent()
     sectionTitle.Size = UDim2.new(1, 0, 0, 40)
     sectionTitle.Position = UDim2.new(0, 0, 0, 5)
     sectionTitle.BackgroundTransparency = 1
-    sectionTitle.Text = "🔥 推牆&仇恨功能 🔥"
+    sectionTitle.Text = ""
     sectionTitle.Font = Enum.Font.GothamBold
     sectionTitle.TextSize = 18
     sectionTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -356,19 +371,6 @@ local function createPushWallContent()
     local attractHateBtn = createButton("吸引仇恨", 3, pushWallContent, 50)
     attractHateBtn.Position = UDim2.new(0.5, -90, 0, 150)
     attractHateBtn.MouseButton1Click:Connect(attractHate)
-    
-    -- 添加說明文字
-    local infoLabel = Instance.new("TextLabel", pushWallContent)
-    infoLabel.Size = UDim2.new(1, -20, 0, 80)
-    infoLabel.Position = UDim2.new(0, 10, 0, 200)
-    infoLabel.BackgroundTransparency = 1
-    infoLabel.Text = "推向中央: 圍繞中心點推牆\n推向虛空: 在原點旋轉推牆\n吸引仇恨: 激活仇恨技能"
-    infoLabel.Font = Enum.Font.Gotham
-    infoLabel.TextSize = 14
-    infoLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-    infoLabel.TextXAlignment = Enum.TextXAlignment.Left
-    infoLabel.TextYAlignment = Enum.TextYAlignment.Top
-    infoLabel.TextWrapped = true
     
     return pushWallContent
 end
